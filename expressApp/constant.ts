@@ -1,3 +1,4 @@
 const SqlPassport = "SQLPASSPORT";
+const Database = "myDb";
 
-export { SqlPassport };
+export { SqlPassport, Database };

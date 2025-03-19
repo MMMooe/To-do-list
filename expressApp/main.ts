@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { SqlPassport } from "./constant";
+import { Database, SqlPassport } from "./constant";
 import { table } from "./table";
 import express from "express";
 import mysql, { QueryError } from "mysql2";
@@ -10,11 +10,13 @@ const port = 5200;
 
 app.use(bodyParser.json());
 
+const myq = mysql.createServer(() => {});
+
 const db = mysql.createConnection({
   host: "localhost",
   user: "miles",
   password: SqlPassport,
-  database: "mysqldb",
+  database: Database,
 });
 
 db.connect((err: QueryError | null) => {
