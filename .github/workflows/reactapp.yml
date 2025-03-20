@@ -18,19 +18,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: cd react app
-        run: cd reactApp
-
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build the project
-        run: npm run build
+      - name: Install dependencies and build the project
+        run: cd reactApp
+          npm install
+          npm run build
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
