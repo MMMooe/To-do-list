@@ -26,11 +26,8 @@ jobs:
       - name: Install required dependencies
         run: sudo apt-get update && sudo apt-get install -y build-essential python3
 
-      - name: Build React App
-        run: export CI=false
-
       - name: Install dependencies and build the project
-        run: cd reactApp && rm -rf node_modules package-lock.json && npm install && npm run build
+        run: cd reactApp && export CI=false && rm -rf node_modules package-lock.json && npm install && npm run build
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
