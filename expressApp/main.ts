@@ -6,15 +6,13 @@ import mysql, { QueryError } from "mysql2";
 import bodyParser from "body-parser";
 
 const app = express();
-const port = 5200;
+const port = 5300;
 
 app.use(bodyParser.json());
 
-const myq = mysql.createServer(() => {});
-
 const db = mysql.createConnection({
   host: "localhost",
-  user: "miles",
+  user: "root",
   password: SqlPassport,
   database: Database,
 });
@@ -31,7 +29,7 @@ db.query(table, (err: Error) => {
   if (err) throw err;
 });
 
-app.post("/postItems", (req: Request, res: Response) => {
+app.post("/postItem", (req: Request, res: Response) => {
   const { title, description } = req.body;
   const sql = "INSERT INTO items (title, description) VALUES (?, ?)";
   db.query(sql, [title, description], (err: QueryError | null) => {
@@ -44,6 +42,25 @@ app.get("/getItems", (req: Request, res: Response) => {
   db.query("SELECT * FROM items", (err: Error, results: any) => {
     if (err) return res.status(500).send(err);
     res.send(results);
+  });
+});
+
+app.get("/deleteItem/:id", (req: Request, res: Response) => {
+  const { id } = req.params;
+  const sql = "DELETE FROM items WHERE id = ?";
+  db.query(sql, [id], (err) => {
+    if (err) return res.status(500).send(err);
+    res.send({ message: `${id} deleted` });
+  });
+});
+
+app.put("/updateItem/:id", (req: Request, res: Response) => {
+  const { title, description } = req.body;
+  const { id } = req.params;
+  const sql = "UPDATE items SET title = ?, description = ? WHERE id = ?";
+  db.query(sql, [title, description, id], (err) => {
+    if (err) return res.status(500).send(err);
+    res.send({ message: `${id} updated` });
   });
 });
 

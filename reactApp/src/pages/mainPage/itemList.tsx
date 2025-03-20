@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { Item } from ".";
 import { Dispatch, useEffect, useState } from "react";
 import { filterVisible } from "./utils";
+import { deleteList, updateList } from "./services";
 
 const ListContainer = styled.div`
   padding: 1em 2em;
@@ -108,19 +109,23 @@ function ItemList(props: Props) {
     props.setListEditing(editing);
   }, [editing]);
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (frontendId: string) => {
     setItems((pre) => {
-      const result = pre.filter((item) => item.id !== id);
+      const result = pre.filter((item) => item.frontendId !== frontendId);
       return result;
     });
+
+    //delete item, the id field is given by the server.
+    //const id = items.find((i) => i.frontendId === frontendId)?.id || "";
+    //deleteList(id)
   };
 
-  const handleEdit = (id: string) => {
+  const handleEdit = (frontendId: string) => {
     setEditing(true);
 
     setItems((prev) => {
       const result = prev.map((item) => {
-        if (item.id === id) {
+        if (item.frontendId === frontendId) {
           return { ...item, editing: true };
         }
         return item;
@@ -130,14 +135,14 @@ function ItemList(props: Props) {
     });
   };
 
-  const handleSave = (id: string, formdata: FormData) => {
+  const handleSave = (frontendId: string, formdata: FormData) => {
     const title = (formdata.get("title")?.toString() || "") as string;
     const description = (formdata.get("description")?.toString() ||
       "") as string;
 
     setItems((prev) => {
       const result = prev.map((item) => {
-        if (item.id === id) {
+        if (item.frontendId === frontendId) {
           return { ...item, editing: false, title, description };
         }
         return item;
@@ -147,12 +152,16 @@ function ItemList(props: Props) {
     });
 
     setEditing(false);
+
+    //update items, the id field is given by the server.
+    //const id = formdata.get("id") || "";
+    //updateList([{id, title, description}])
   };
 
-  const handleCancel = (id: string) => {
+  const handleCancel = (frontendId: string) => {
     setItems((prev) => {
       const result = prev.map((item) => {
-        if (item.id === id) {
+        if (item.frontendId === frontendId) {
           return { ...item, editing: false };
         }
         return item;
@@ -164,10 +173,10 @@ function ItemList(props: Props) {
     setEditing(false);
   };
 
-  const handleComplete = (id: string) => {
+  const handleComplete = (frontendId: string) => {
     setItems((prev) => {
       const result = prev.map((item) => {
-        if (item.id === id) {
+        if (item.frontendId === frontendId) {
           return { ...item, completed: !item.completed };
         }
         return item;
@@ -181,7 +190,7 @@ function ItemList(props: Props) {
     <ListContainer>
       {filterVisible(items).map((item) =>
         item.editing ? (
-          <EditingItem key={item.id}>
+          <EditingItem key={item.frontendId}>
             <form>
               <div className="text">
                 <div>
@@ -198,18 +207,23 @@ function ItemList(props: Props) {
               </div>
               <div className="buttons">
                 <button
-                  formAction={(formdata) => handleSave(item.id, formdata)}
+                  formAction={(formdata) =>
+                    handleSave(item.frontendId, formdata)
+                  }
                 >
                   save
                 </button>
-                <button name="cancel" onClick={() => handleCancel(item.id)}>
+                <button
+                  name="cancel"
+                  onClick={() => handleCancel(item.frontendId)}
+                >
                   cancel
                 </button>
               </div>
             </form>
           </EditingItem>
         ) : (
-          <DisplayItem key={item.id}>
+          <DisplayItem key={item.frontendId}>
             <div className="text">
               {item.completed ? (
                 <i className="completeCircle"></i>
@@ -226,19 +240,22 @@ function ItemList(props: Props) {
               </div>
             </div>
             <div className="buttons">
-              <button name="delete" onClick={() => handleDelete(item.id)}>
+              <button
+                name="delete"
+                onClick={() => handleDelete(item.frontendId)}
+              >
                 Delete
               </button>
               <button
                 name="edit"
                 disabled={editing}
-                onClick={() => handleEdit(item.id)}
+                onClick={() => handleEdit(item.frontendId)}
               >
                 Edit
               </button>
               <button
                 name="signComplete"
-                onClick={() => handleComplete(item.id)}
+                onClick={() => handleComplete(item.frontendId)}
               >
                 toggle Complete State
               </button>

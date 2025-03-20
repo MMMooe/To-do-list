@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { generateID } from "./utils";
 import styled from "styled-components";
 import ItemList from "./itemList";
 import FilterList from "./filterList";
 import useLocalstorage from "./useLocalstorage";
+import { getList, postList } from "./services";
 
 export interface Item {
   title: string;
   description: string;
-  id: string;
+  frontendId: string;
   editing: boolean;
   completed: boolean;
   visible: boolean;
@@ -57,17 +58,25 @@ function MainPage() {
     []
   );
 
+  //get lists from server
+  /*useEffect(() => {
+    (async () => {
+      const lists = await getList();
+      setItems(lists);
+    })();
+  }, []);*/
+
   //responding to the filter with the new adding item.
   const [addingItemVisible, setAddingItemVisible] = useState<boolean>(true);
 
   const [listEditing, setListEditing] = useState<boolean>(false);
 
   const handleAddItem = (formData: FormData) => {
-    const id = generateID();
+    const frontendId = generateID();
     const title = (formData.get("title") || "") as string;
     const description = (formData.get("description") || "") as string;
     const addingItem = {
-      id,
+      frontendId,
       title,
       description,
       completed: false,
@@ -77,6 +86,9 @@ function MainPage() {
     setItems((pre) => {
       return pre.concat([addingItem]);
     });
+
+    //send a new item to server
+    //postList(addingItem);
   };
 
   return (
