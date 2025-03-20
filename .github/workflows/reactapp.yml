@@ -30,7 +30,7 @@ jobs:
         run: npm run build
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3.1.2
+        uses: actions/upload-artifact@v2
         with:
           path: ./build # Ensure this matches your React build output
 
