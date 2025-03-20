@@ -1,3 +1,5 @@
 Recommending to run the app with the nodejs which is above 14.
 
-The common script command is in the package.json. after "npm install", "npm start" to run the app locally.
+React app could run after "npm install", "npm start". more common script commands is in the package.json. 
+
+Express app could run in dev with "npm run dev". a running mysql server is presuming.
